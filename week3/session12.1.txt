@@ -1,0 +1,26 @@
+class Solution {
+    private static final int[] DAYS_IN_MONTH = {0, 31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31};
+
+    public int dayOfYear(String date) {
+        String[] parts = date.split("-");
+        int year = Integer.parseInt(parts[0]);
+        int month = Integer.parseInt(parts[1]);
+        int day = Integer.parseInt(parts[2]);
+
+        int dayCount = day;
+
+        // Add days of all previous months in the same year
+        for (int m = 1; m < month; m++) {
+            dayCount += DAYS_IN_MONTH[m];
+            if (m == 2 && isLeapYear(year)) {
+                dayCount += 1;
+            }
+        }
+
+        return dayCount;
+    }
+
+    private boolean isLeapYear(int year) {
+        return (year % 4 == 0 && year % 100 != 0) || (year % 400 == 0);
+    }
+}
