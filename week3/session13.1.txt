@@ -1,0 +1,63 @@
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.List;
+import java.util.PriorityQueue;
+
+class Student {
+    private final int id;
+    private final String name;
+    private final double cgpa;
+
+    public Student(int id, String name, double cgpa) {
+        this.id = id;
+        this.name = name;
+        this.cgpa = cgpa;
+    }
+
+    public int getID() {
+        return id;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public double getCGPA() {
+        return cgpa;
+    }
+}
+
+class Priorities {
+    public List<Student> getStudents(List<String> events) {
+        // Define priority ordering using Comparator:
+        // 1. Highest CGPA first (descending)
+        // 2. Name in ascending alphabetical order
+        // 3. ID in ascending numerical order
+        PriorityQueue<Student> pq = new PriorityQueue<>(
+            Comparator.comparing(Student::getCGPA, Comparator.reverseOrder())
+                      .thenComparing(Student::getName)
+                      .thenComparing(Student::getID)
+        );
+
+        for (String event : events) {
+            String[] parts = event.split(" ");
+            if (parts[0].equals("ENTER")) {
+                String name = parts[1];
+                double cgpa = Double.parseDouble(parts[2]);
+                int id = Integer.parseInt(parts[3]);
+                
+                pq.add(new Student(id, name, cgpa));
+            } else if (parts[0].equals("SERVED")) {
+                pq.poll();
+            }
+        }
+
+        // Dequeue remaining elements to preserve priority order in the returned list
+        List<Student> unservedStudents = new ArrayList<>();
+        while (!pq.isEmpty()) {
+            unservedStudents.add(pq.poll());
+        }
+
+        return unservedStudents;
+    }
+}
